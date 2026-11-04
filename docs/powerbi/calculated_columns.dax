@@ -1,0 +1,58 @@
+// Create these in the Subs table (Table view > select Subs > New column), one at a time.
+
+TicketBand =
+SWITCH(TRUE(),
+    Subs[SupportTickets] <= 2, "0-2",
+    Subs[SupportTickets] <= 4, "3-4",
+    Subs[SupportTickets] <= 6, "5-6",
+    Subs[SupportTickets] <= 8, "7-8",
+    "9+")
+
+TicketBandSort =
+SWITCH(TRUE(),
+    Subs[SupportTickets] <= 2, 1,
+    Subs[SupportTickets] <= 4, 2,
+    Subs[SupportTickets] <= 6, 3,
+    Subs[SupportTickets] <= 8, 4,
+    5)
+
+SessionBand =
+SWITCH(TRUE(),
+    Subs[MonthlySessions] <= 12, "1-12",
+    Subs[MonthlySessions] <= 20, "13-20",
+    Subs[MonthlySessions] <= 30, "21-30",
+    Subs[MonthlySessions] <= 40, "31-40",
+    Subs[MonthlySessions] <= 50, "41-50",
+    "51-60")
+
+SessionBandSort =
+SWITCH(TRUE(),
+    Subs[MonthlySessions] <= 12, 1,
+    Subs[MonthlySessions] <= 20, 2,
+    Subs[MonthlySessions] <= 30, 3,
+    Subs[MonthlySessions] <= 40, 4,
+    Subs[MonthlySessions] <= 50, 5,
+    6)
+
+AtRisk =
+IF(Subs[MonthlySessions] <= 12 || Subs[SupportTickets] >= 5, "At risk", "Other")
+
+ChurnStatus = IF(Subs[ChurnFlag] = 1, "Churned", "Retained")
+
+// Optional English labels for slicers
+PackageTierEN =
+SWITCH(Subs[PackageTier], "أساسي", "Basic", "متقدم", "Advanced", "أعمال", "Business", Subs[PackageTier])
+
+PackageTierSort =
+SWITCH(Subs[PackageTier], "أساسي", 1, "متقدم", 2, "أعمال", 3, 4)
+
+BillingCycleEN =
+SWITCH(Subs[BillingCycle], "شهري", "Monthly", "سنوي", "Annual", Subs[BillingCycle])
+
+PaymentMethodEN =
+SWITCH(Subs[PaymentMethod], "بطاقة", "Card", "محفظة", "Wallet", "تحويل", "Transfer", Subs[PaymentMethod])
+
+OnboardingEN = IF(Subs[OnboardedFlag] = 1, "Yes", "No")
+
+// Then: Column tools > Sort by column
+//   TicketBand -> TicketBandSort, SessionBand -> SessionBandSort, PackageTierEN -> PackageTierSort

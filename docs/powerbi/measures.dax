@@ -1,0 +1,59 @@
+// Create these in a blank "_Measures" table (Home > Enter data), one measure at a time.
+
+Total Subscribers = COUNTROWS(Subs)
+
+Churned Customers = CALCULATE(COUNTROWS(Subs), Subs[ChurnFlag] = 1)
+
+Retained Customers = CALCULATE(COUNTROWS(Subs), Subs[ChurnFlag] = 0)
+
+Churn Rate % = DIVIDE([Churned Customers], [Total Subscribers])
+
+Retention Rate % = DIVIDE([Retained Customers], [Total Subscribers])
+
+Overall Churn Rate % = CALCULATE([Churn Rate %], REMOVEFILTERS(Subs))
+
+Churn vs Overall (pts) = ([Churn Rate %] - [Overall Churn Rate %]) * 100
+
+Avg Monthly Sessions = AVERAGE(Subs[MonthlySessions])
+
+Avg Support Tickets = AVERAGE(Subs[SupportTickets])
+
+Avg Sessions (Churned) = CALCULATE([Avg Monthly Sessions], Subs[ChurnFlag] = 1)
+
+Avg Sessions (Retained) = CALCULATE([Avg Monthly Sessions], Subs[ChurnFlag] = 0)
+
+Avg Tickets (Churned) = CALCULATE([Avg Support Tickets], Subs[ChurnFlag] = 1)
+
+Avg Tickets (Retained) = CALCULATE([Avg Support Tickets], Subs[ChurnFlag] = 0)
+
+// 95% Wilson score interval for the churn rate
+Wilson Low =
+VAR n = [Total Subscribers]
+VAR p = [Churn Rate %]
+VAR z = 1.96
+RETURN
+DIVIDE(
+    p + z^2 / (2 * n) - z * SQRT(p * (1 - p) / n + z^2 / (4 * n^2)),
+    1 + z^2 / n
+)
+
+Wilson High =
+VAR n = [Total Subscribers]
+VAR p = [Churn Rate %]
+VAR z = 1.96
+RETURN
+DIVIDE(
+    p + z^2 / (2 * n) + z * SQRT(p * (1 - p) / n + z^2 / (4 * n^2)),
+    1 + z^2 / n
+)
+
+// Optional: label for matrix cells, e.g. "12.7%  (479)". Colour the cells by [Churn Rate %] (Based on field).
+Rate Label =
+IF(
+    ISBLANK([Churn Rate %]),
+    BLANK(),
+    FORMAT([Churn Rate %], "0.0%") & "  (" & FORMAT([Total Subscribers], "#,0") & ")"
+)
+
+// Formats: counts = whole number; rates and Wilson = Percentage, 1 decimal;
+// Churn vs Overall (pts) = decimal (already x100); averages = decimal.

@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+# Customer data is not committed. Put subscriptions-churn.csv in data/ locally.
+data/*.csv
