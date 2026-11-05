@@ -52,5 +52,5 @@ Runs in about a minute. The seed is fixed (42), so the numbers repeat exactly. `
 | `churn_analysis.py` | Descriptive statistics, logistic regression, bootstrap, cross-validation |
 | `results/results.json` | All computed results |
 | `docs/powerbi/` | Power Query script, DAX columns and measures, build guide |
-| `docs/images/` | Mockups of dashboard pages 1 to 3 |
+| `docs/images/` |  dashboard pages 1 to 4|
 | `data/` | Place the CSV here locally (ignored by git) |
